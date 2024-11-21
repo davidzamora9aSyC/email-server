@@ -1,0 +1,60 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+
+# Build directories
+dist/
+build/
+out/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.orig
+*.old
+*.cache
+
+# Operating system files
+*.pid
+*.seed
+*.pid.lock
+
+# Generated files
+coverage/
+*.min.js
+*.map
+*.lock
+*.gz
+
+# Package lock files
+package-lock.json
+yarn.lock
+
+# Project-specific (uncomment or add based on your tools)
+# .next/           # For Next.js
+# .nuxt/           # For Nuxt.js
+# public/uploads/  # For uploaded files in web projects
+
+# Ignore specific sensitive files
+secrets.json
