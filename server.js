@@ -20,7 +20,6 @@ app.post('/send-email', async (req, res) => {
 
   const htmlContent = fs.readFileSync(templatePath, 'utf-8');
 
-  
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -33,8 +32,6 @@ app.post('/send-email', async (req, res) => {
       rejectUnauthorized: true,
     },
   });
-  
-  
 
   const mailOptions = {
     from: '"Ofaros" <ofarosdev@gmail.com>',
@@ -50,12 +47,21 @@ app.post('/send-email', async (req, res) => {
     ],
   };
 
+  const notificationMailOptions = {
+    from: '"Ofaros" <ofarosdev@gmail.com>',
+    to: 'contacto@ofaros.org',
+    subject: 'Nuevo registro en Ofaros',
+    html: `<p>Un nuevo usuario se ha registrado como <strong>${template}</strong>.</p>
+           <p>Email: ${email}</p>`,
+  };
+
   try {
     await transporter.sendMail(mailOptions);
-    res.send('Email sent successfully.');
+    await transporter.sendMail(notificationMailOptions);
+    res.send('Emails sent successfully.');
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while sending the email.');
+    res.status(500).send('An error occurred while sending the emails.');
   }
 });
 
