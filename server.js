@@ -22,7 +22,10 @@ app.post('/api/send-email', async (req, res) => {
   }
 
   if (template === 'Artista' && (!phoneNumber || !stageName || !username)) {
-    return res.status(400).send('Artistas must provide phoneNumber, stageName, and username.');
+    return res.status(400).json({
+      error: 'Artistas must provide phoneNumber, stageName, and username.',
+      body: req.body,
+    });
   }
 
   const templatePath = path.join(__dirname, `${template}.html`);
