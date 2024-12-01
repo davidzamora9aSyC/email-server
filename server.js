@@ -15,7 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.post('/send-email', async (req, res) => {
+app.post('/api/send-email', async (req, res) => {
   const { email, template } = req.body;
 
   if (!email || !template) {
