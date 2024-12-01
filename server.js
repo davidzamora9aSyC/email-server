@@ -6,7 +6,6 @@ const path = require('path');
 
 const app = express();
 
-
 app.use(cors({
   origin: 'https://ofaros.org/',
   methods: ['GET', 'POST'], 
@@ -16,10 +15,14 @@ app.use(cors({
 app.use(express.json());
 
 app.post('/api/send-email', async (req, res) => {
-  const { email, template } = req.body;
+  const { email, phoneNumber, stageName, username, template } = req.body;
 
   if (!email || !template) {
     return res.status(400).send('Email and template are required.');
+  }
+
+  if (template === 'Artista' && (!phoneNumber || !stageName || !username)) {
+    return res.status(400).send('Artistas must provide phoneNumber, stageName, and username.');
   }
 
   const templatePath = path.join(__dirname, `${template}.html`);
@@ -56,12 +59,20 @@ app.post('/api/send-email', async (req, res) => {
     ],
   };
 
+  let notificationHtml = `<p>Un nuevo usuario se ha registrado como <strong>${template}</strong>.</p>
+                          <p>Email: ${email}</p>`;
+
+  if (template === 'Artista') {
+    notificationHtml += `<p>Nombre Artístico: ${stageName}</p>
+                         <p>Nombre Natural: ${username}</p>
+                         <p>Celular: ${phoneNumber}</p>`;
+  }
+
   const notificationMailOptions = {
     from: '"Ofaros" <ofarosdev@gmail.com>',
     to: 'contacto@ofaros.org',
-    subject: 'Nuevo registro en Ofaros',
-    html: `<p>Un nuevo usuario se ha registrado como <strong>${template}</strong>.</p>
-           <p>Email: ${email}</p>`,
+    subject: template === 'Artista' ? 'Nuevo registro de artista en Ofaros' : 'Nuevo registro en Ofaros',
+    html: notificationHtml,
   };
 
   try {
