@@ -85,7 +85,7 @@ app.post('/api/send-email', async (req, res) => {
 
   const notificationMailOptions = {
     from: '"Ofaros" <ofarosdev@gmail.com>',
-    to: 'davidzamora9a@gmail.com',
+    to: 'contacto@ofaros.org',
     subject: template === 'Artista' ? 'Nuevo registro de artista en Ofaros' : 'Nuevo registro en Ofaros',
     html: notificationHtml,
   };
