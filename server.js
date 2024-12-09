@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 app.post('/api/send-email', async (req, res) => {
-  const { email, phoneNumber, stageName, username, template } = req.body;
+  const { email, phoneNumber, stageName, username, address, template } = req.body;
 
   if (!email || !template) {
     return res.status(400).send('Email and template are required.');
@@ -27,6 +27,13 @@ app.post('/api/send-email', async (req, res) => {
       body: req.body,
     });
   }
+  if (template === 'Cliente' && (!phoneNumber || !address || !username)) {
+    return res.status(400).json({
+      error: 'Client must provide phoneNumber, address, and username.',
+      body: req.body,
+    });
+  }
+
 
   const templatePath = path.join(__dirname, `${template}.html`);
   if (!fs.existsSync(templatePath)) {
@@ -70,10 +77,15 @@ app.post('/api/send-email', async (req, res) => {
                          <p>Nombre Natural: ${username}</p>
                          <p>Celular: ${phoneNumber}</p>`;
   }
+  if (template === 'Cliente') {
+    notificationHtml += `<p>Nombre de usuario: ${username}</p>
+                         <p>Celular: ${phoneNumber}</p>
+                         <p>Dirección: ${address}</p>`;
+  }
 
   const notificationMailOptions = {
     from: '"Ofaros" <ofarosdev@gmail.com>',
-    to: 'contacto@ofaros.org',
+    to: 'davidzamora9a@gmail.com',
     subject: template === 'Artista' ? 'Nuevo registro de artista en Ofaros' : 'Nuevo registro en Ofaros',
     html: notificationHtml,
   };
