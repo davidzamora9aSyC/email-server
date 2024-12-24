@@ -14,30 +14,39 @@ app.use(cors({
 
 app.use(express.json());
 
+// Middleware para loggear cada solicitud entrante
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] Request received: ${req.method} ${req.url}`);
+  console.log(`Body:`, req.body);
+  next();
+});
+
 app.post('/api/send-email', async (req, res) => {
   const { email, phoneNumber, stageName, username, address, template } = req.body;
 
   if (!email || !template) {
-    return res.status(400).send('Email and template are required.');
+    const errorMsg = 'Email and template are required.';
+    console.error(`[${new Date().toISOString()}] Error: ${errorMsg}`);
+    return res.status(400).send(errorMsg);
   }
 
   if (template === 'Artista' && (!phoneNumber || !stageName || !username)) {
-    return res.status(400).json({
-      error: 'Artistas must provide phoneNumber, stageName, and username.',
-      body: req.body,
-    });
+    const errorMsg = 'Artistas must provide phoneNumber, stageName, and username.';
+    console.error(`[${new Date().toISOString()}] Error: ${errorMsg}`, req.body);
+    return res.status(400).json({ error: errorMsg, body: req.body });
   }
+  
   if (template === 'Cliente' && (!phoneNumber || !address || !username)) {
-    return res.status(400).json({
-      error: 'Client must provide phoneNumber, address, and username.',
-      body: req.body,
-    });
+    const errorMsg = 'Client must provide phoneNumber, address, and username.';
+    console.error(`[${new Date().toISOString()}] Error: ${errorMsg}`, req.body);
+    return res.status(400).json({ error: errorMsg, body: req.body });
   }
-
 
   const templatePath = path.join(__dirname, `${template}.html`);
   if (!fs.existsSync(templatePath)) {
-    return res.status(404).send('Template not found.');
+    const errorMsg = 'Template not found.';
+    console.error(`[${new Date().toISOString()}] Error: ${errorMsg}`);
+    return res.status(404).send(errorMsg);
   }
 
   const htmlContent = fs.readFileSync(templatePath, 'utf-8');
@@ -91,14 +100,20 @@ app.post('/api/send-email', async (req, res) => {
   };
 
   try {
+    console.log(`[${new Date().toISOString()}] Sending email to ${email}...`);
     await transporter.sendMail(mailOptions);
+    console.log(`[${new Date().toISOString()}] Email sent to ${email} successfully.`);
+    
+    console.log(`[${new Date().toISOString()}] Sending notification email to contacto@ofaros.org...`);
     await transporter.sendMail(notificationMailOptions);
+    console.log(`[${new Date().toISOString()}] Notification email sent successfully.`);
+
     res.send('Emails sent successfully.');
   } catch (error) {
-    console.error(error);
+    console.error(`[${new Date().toISOString()}] Error occurred while sending emails:`, error.message || error);
     res.status(500).send('An error occurred while sending the emails.');
   }
 });
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`[${new Date().toISOString()}] Server running on port ${PORT}`));
