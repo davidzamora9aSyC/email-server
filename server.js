@@ -7,7 +7,7 @@ const path = require('path');
 const app = express();
 
 app.use(cors({
-  origin: 'https://ofaros.org/',
+  origin: 'https://ofaros.org',
   methods: ['GET', 'POST'], 
   allowedHeaders: ['Content-Type'], 
 }));
